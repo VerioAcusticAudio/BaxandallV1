@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peter Baxandall — Verio Apps Didácticas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+    --cream-light: #FDF8F3;
+    --cream: #F5EDE4;
+    --cream-dark: #E8DDD0;
+    --sage-light: #C5D4C0;
+    --sage: #9BB08F;
+    --sage-dark: #7A9A6D;
+    --terracotta-light: #D4847C;
+    --terracotta: #B85C50;
+    --terracotta-dark: #8B3A30;
+    --wood-light: #D4B896;
+    --wood: #A67B5B;
+    --wood-dark: #6B4423;
+    --text-primary: #2C2420;
+    --text-secondary: #5C544D;
+    --text-muted: #8A817A;
+    --border: #D4C8BC;
+    --shadow-sm: 0 1px 3px rgba(44,36,32,0.08);
+    --shadow-md: 0 4px 12px rgba(44,36,32,0.12);
+    --shadow-lg: 0 8px 24px rgba(44,36,32,0.16);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--cream-light);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes loaderProg {
+    from { width: 0%; }
+    to   { width: 100%; }
+}
+
+@keyframes loaderFade {
+    to { opacity: 0; pointer-events: none; visibility: hidden; }
+}
+
+@keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+#loader {
+    position: fixed;
+    inset: 0;
+    background: var(--cream-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    animation: loaderFade 0.35s 0.85s ease forwards;
+}
+
+.ld-inner { text-align: center; }
+
+.ld-logo {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--terracotta);
+    letter-spacing: -0.04em;
+    margin-bottom: 6px;
+}
+
+.ld-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+}
+
+.ld-bar {
+    width: 140px;
+    height: 2px;
+    background: var(--cream-dark);
+    border-radius: 2px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.ld-prog {
+    height: 100%;
+    background: linear-gradient(90deg, var(--terracotta-light), var(--terracotta), var(--terracotta-dark));
+    border-radius: 2px;
+    animation: loaderProg 0.75s cubic-bezier(.22,.61,.36,1) forwards;
+}
+
+header {
+    background: linear-gradient(135deg, var(--terracotta) 0%, var(--terracotta-dark) 100%);
+    padding: 14px 28px;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: fadeDown 0.38s 0.9s ease both;
+}
+
+header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--cream-light);
+    letter-spacing: -0.025em;
+}
+
+header .sub {
+    font-size: 11px;
+    color: rgba(253,248,243,0.72);
+    font-weight: 400;
+}
+
+.hbadge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    background: rgba(253,248,243,0.14);
+    color: var(--cream-light);
+    border: 1px solid rgba(253,248,243,0.26);
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.07em;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 1fr 278px;
+    gap: 14px;
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 20px 22px 32px;
+    align-items: start;
+}
+
+.panel-grafico {
+    grid-column: 1;
+    grid-row: 1;
+    background: var(--cream-light);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px 18px 14px;
+    box-shadow:
+        0 1px 2px rgba(44,36,32,0.07),
+        0 4px 10px rgba(44,36,32,0.06),
+        0 10px 22px rgba(44,36,32,0.04),
+        inset 0 1px 0 rgba(255,255,255,0.55);
+    animation: fadeUp 0.42s 0.95s ease both;
+    transition: box-shadow 0.24s ease;
+}
+
+.panel-grafico:hover {
+    box-shadow:
+        0 2px 4px rgba(44,36,32,0.09),
+        0 8px 18px rgba(44,36,32,0.08),
+        0 20px 40px rgba(44,36,32,0.06),
+        inset 0 1px 0 rgba(255,255,255,0.65);
+}
+
+.tabs-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.16s ease;
+}
+
+.tab-btn:hover { background: var(--cream); color: var(--text-primary); }
+
+.tab-btn.active {
+    background: var(--terracotta);
+    border-color: var(--terracotta-dark);
+    color: white;
+}
+
+.tabs-spacer { flex: 1; }
+
+.hover-disp {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    min-width: 150px;
+    text-align: right;
+    letter-spacing: 0.02em;
+}
+
+.act-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 9px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.16s ease;
+}
+
+.act-btn:hover { background: var(--cream-dark); border-color: var(--wood); }
+
+.act-btn.on {
+    background: var(--wood);
+    border-color: var(--wood-dark);
+    color: white;
+}
+
+.canvas-wrap {
+    position: relative;
+    height: 286px;
+    overflow: hidden;
+}
+
+.canvas-tab {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.26s ease, transform 0.26s ease;
+    pointer-events: none;
+}
+
+.canvas-tab.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.leyenda {
+    display: flex;
+    gap: 14px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--cream-dark);
+    flex-wrap: wrap;
+}
+
+.ley-item { display: flex; align-items: center; gap: 6px; }
+.ley-line { width: 18px; height: 3px; border-radius: 2px; }
+.ley-txt { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); }
+
+.panel-controles {
+    grid-column: 2;
+    grid-row: 1 / 5;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.card {
+    background: var(--cream-light);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 15px;
+    box-shadow:
+        0 1px 2px rgba(44,36,32,0.07),
+        0 3px 8px rgba(44,36,32,0.06),
+        0 8px 18px rgba(44,36,32,0.04),
+        inset 0 1px 0 rgba(255,255,255,0.55);
+    transition: transform 0.22s cubic-bezier(.22,.61,.36,1), box-shadow 0.22s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 2px 4px rgba(44,36,32,0.09),
+        0 8px 16px rgba(44,36,32,0.09),
+        0 20px 36px rgba(44,36,32,0.07),
+        inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+.card:nth-child(1) { animation: fadeUp 0.42s 1.0s ease both; }
+.card:nth-child(2) { animation: fadeUp 0.42s 1.1s ease both; }
+.card:nth-child(3) { animation: fadeUp 0.42s 1.18s ease both; }
+.card:nth-child(4) { animation: fadeUp 0.42s 1.26s ease both; }
+
+.card-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    margin-bottom: 13px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--cream-dark);
+}
+
+.sl-grupo { margin-bottom: 14px; }
+.sl-grupo:last-child { margin-bottom: 0; }
+
+.sl-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 3px;
+}
+
+.sl-nombre { font-size: 12.5px; font-weight: 600; color: var(--text-primary); }
+
+.sl-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: color 0.18s;
+    min-width: 64px;
+    text-align: right;
+    cursor: text;
+}
+
+.sl-val.pos { color: var(--sage-dark); }
+.sl-val.neg { color: var(--terracotta); }
+
+.sl-nombre-sm {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.sl-val-sm {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--wood);
+    min-width: 52px;
+    text-align: right;
+    cursor: text;
+}
+
+.sl-freq {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    background: var(--cream-dark);
+    transition: background 0s;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    cursor: pointer;
+    box-shadow:
+        0 2px 5px rgba(184,92,80,0.38),
+        0 0 0 2px rgba(184,92,80,0.10);
+    transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.28);
+    box-shadow:
+        0 4px 12px rgba(184,92,80,0.52),
+        0 0 0 4px rgba(184,92,80,0.15);
+}
+
+input[type=range]::-webkit-slider-thumb:active {
+    transform: scale(1.12);
+    box-shadow: 0 2px 6px rgba(184,92,80,0.6);
+}
+
+input[type=range]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(184,92,80,0.38);
+}
+
+input[type=range].fc-sl::-webkit-slider-thumb {
+    background: var(--wood);
+    box-shadow: 0 2px 5px rgba(166,123,91,0.38), 0 0 0 2px rgba(166,123,91,0.10);
+}
+
+input[type=range].fc-sl::-webkit-slider-thumb:hover {
+    box-shadow: 0 4px 12px rgba(166,123,91,0.52), 0 0 0 4px rgba(166,123,91,0.15);
+}
+
+.sl-escala { display: flex; justify-content: space-between; margin-top: 4px; }
+.sl-escala span { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted); }
+
+.audio-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.play-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--sage) 0%, var(--sage-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+    box-shadow: 0 2px 8px rgba(122,154,109,0.35);
+    flex: 1;
+}
+
+.play-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(122,154,109,0.48);
+}
+
+.play-btn.playing {
+    background: linear-gradient(135deg, var(--terracotta-light) 0%, var(--terracotta) 100%);
+    box-shadow: 0 2px 8px rgba(184,92,80,0.35);
+}
+
+.audio-sel {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 6px 6px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--cream-light);
+    color: var(--text-secondary);
+    cursor: pointer;
+    outline: none;
+}
+
+.audio-note {
+    font-size: 10.5px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.5;
+}
+
+.mediciones { display: flex; flex-direction: column; gap: 9px; }
+
+.med-fila { display: flex; align-items: center; }
+
+.med-f {
+    font-size: 10.5px;
+    color: var(--text-muted);
+    min-width: 36px;
+}
+
+.med-bar-wrap {
+    flex: 1;
+    height: 3px;
+    background: var(--cream-dark);
+    border-radius: 2px;
+    margin: 0 8px;
+    position: relative;
+}
+
+.med-bar {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: 2px;
+    transition: left 0.12s ease, width 0.12s ease, background 0.12s ease;
+}
+
+.med-cmark {
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    width: 1px;
+    height: 11px;
+    background: var(--border);
+    transform: translateX(-50%);
+}
+
+.med-v {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    min-width: 44px;
+    text-align: right;
+    transition: color 0.14s;
+}
+
+.med-v.pos { color: var(--sage-dark); }
+.med-v.neg { color: var(--terracotta); }
+
+.col-bloque { grid-column: 1; }
+.col-bloque.r2 { grid-row: 2; animation: fadeUp 0.42s 1.05s ease both; }
+.col-bloque.r3 { grid-row: 3; animation: fadeUp 0.42s 1.12s ease both; }
+
+.col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--cream-light);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px 18px;
+    cursor: pointer;
+    user-select: none;
+    box-shadow:
+        0 1px 2px rgba(44,36,32,0.07),
+        0 3px 8px rgba(44,36,32,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.5);
+    transition: background 0.14s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.col-head:hover {
+    background: var(--cream);
+    transform: translateY(-1px);
+    box-shadow:
+        0 2px 4px rgba(44,36,32,0.09),
+        0 6px 14px rgba(44,36,32,0.07),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+.col-head.open {
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    border-bottom-color: var(--cream-dark);
+    transform: none;
+}
+
+.col-arrow { font-size: 11px; color: var(--text-muted); transition: transform 0.22s ease; }
+.col-head.open .col-arrow { transform: rotate(180deg); }
+
+.col-body {
+    background: var(--cream-light);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    box-shadow:
+        0 4px 12px rgba(44,36,32,0.07),
+        0 8px 24px rgba(44,36,32,0.05);
+    display: none;
+    overflow: hidden;
+}
+
+.col-body.vis { display: block; }
+
+.circ-wrap { padding: 18px; overflow-x: auto; }
+
+.teoria-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    padding: 18px 18px 14px;
+}
+
+.t-bloque {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(44,36,32,0.06);
+}
+
+.t-bloque h4 { font-size: 12px; font-weight: 600; color: var(--terracotta); margin-bottom: 6px; }
+.t-bloque p { font-size: 11px; color: var(--text-secondary); line-height: 1.58; }
+
+.teoria-nota {
+    font-size: 10.5px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.55;
+    padding: 12px 18px 16px;
+    border-top: 1px solid var(--cream-dark);
+}
+
+.mono-sm {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    color: var(--text-muted);
+}
+
+footer {
+    text-align: center;
+    padding: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.07em;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 0.4s 1.3s ease both;
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+    <div class="ld-inner">
+        <div class="ld-logo">Verio · Apps Didácticas</div>
+        <div class="ld-sub">Peter Baxandall · Baxandall EQ 1952</div>
+        <div class="ld-bar"><div class="ld-prog"></div></div>
+    </div>
+</div>
+
+<header>
+    <div>
+        <h1>Procesador Espectral Peter Baxandall</h1>
+        <span class="sub">EQ Shelving de Graves y Agudos · Red RC Pasiva + Op-Amp</span>
+    </div>
+    <span class="hbadge">Verio Apps Didácticas</span>
+</header>
+
+<main>
+
+<section class="panel-grafico">
+    <div class="tabs-row">
+        <button class="tab-btn active" data-tab="amp">Ganancia</button>
+        <button class="tab-btn" data-tab="phase">Fase</button>
+        <button class="tab-btn" data-tab="oct">Octavas</button>
+        <div class="tabs-spacer"></div>
+        <span class="hover-disp" id="hover-disp">—</span>
+        <button class="act-btn" id="btn-ab">A/B</button>
+        <button class="act-btn" id="btn-png">PNG</button>
+        <button class="act-btn" id="btn-csv">CSV</button>
+    </div>
+    <div class="canvas-wrap">
+        <div class="canvas-tab active" id="tab-amp"><canvas id="cvAmp"></canvas></div>
+        <div class="canvas-tab" id="tab-phase"><canvas id="cvPhase"></canvas></div>
+        <div class="canvas-tab" id="tab-oct"><canvas id="cvOct"></canvas></div>
+    </div>
+    <div class="leyenda" id="leyenda-wrap">
+        <div class="ley-item">
+            <div class="ley-line" style="background:var(--terracotta)"></div>
+            <span class="ley-txt">Respuesta</span>
+        </div>
+        <div class="ley-item">
+            <div class="ley-line" style="background:var(--sage);opacity:0.5"></div>
+            <span class="ley-txt">0 dB ref.</span>
+        </div>
+        <div class="ley-item" id="ley-ab" style="display:none">
+            <div class="ley-line" style="background:var(--text-muted);opacity:0.5;border-top:1px dashed"></div>
+            <span class="ley-txt">Referencia A</span>
+        </div>
+    </div>
+</section>
+
+<section class="panel-controles">
+
+    <div class="card">
+        <div class="card-label">Low - Graves</div>
+        <div class="sl-grupo">
+            <div class="sl-top">
+                <span class="sl-nombre">Amplificar/Atenuar</span>
+                <span class="sl-val" id="val-bass">+0.0 dB</span>
+            </div>
+            <input type="range" id="sl-bass" min="-12" max="12" step="0.5" value="0">
+            <div class="sl-escala"><span>−12</span><span>0</span><span>+12</span></div>
+        </div>
+        <div class="sl-grupo">
+            <div class="sl-top">
+                <span class="sl-nombre-sm">Frecuencia de Corte</span>
+                <span class="sl-val-sm" id="val-fc-bass">150 Hz</span>
+            </div>
+            <input type="range" id="sl-fc-bass" class="fc-sl" min="50" max="400" step="5" value="150">
+            <div class="sl-escala"><span>50 Hz</span><span>400 Hz</span></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-label">High - Agudos</div>
+        <div class="sl-grupo">
+            <div class="sl-top">
+                <span class="sl-nombre">Amplificar/Atenuar</span>
+                <span class="sl-val" id="val-treble">+0.0 dB</span>
+            </div>
+            <input type="range" id="sl-treble" min="-12" max="12" step="0.5" value="0">
+            <div class="sl-escala"><span>−12</span><span>0</span><span>+12</span></div>
+        </div>
+        <div class="sl-grupo">
+            <div class="sl-top">
+                <span class="sl-nombre-sm">Frecuencia de Corte</span>
+                <span class="sl-val-sm" id="val-fc-treble">6.0 kHz</span>
+            </div>
+            <input type="range" id="sl-fc-treble" class="fc-sl" min="2000" max="16000" step="100" value="6000">
+            <div class="sl-escala"><span>2 kHz</span><span>16 kHz</span></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-label">Audio</div>
+        <div class="audio-row">
+            <button class="play-btn" id="play-btn">▶ Escuchar</button>
+            <select class="audio-sel" id="audio-sel">
+                <option value="noise">Ruido</option>
+                <option value="440">440 Hz</option>
+                <option value="1k">1 kHz</option>
+            </select>
+        </div>
+        <div class="audio-note">Escuchá el impacto ambos procesos espectrales en tiempo real.</div>
+    </div>
+
+    <div class="card" style="flex:1">
+        <div class="card-label">Mediciones</div>
+        <div class="mediciones">
+            <div class="med-fila">
+                <span class="med-f">50 Hz</span>
+                <div class="med-bar-wrap"><div class="med-cmark"></div><div class="med-bar" id="bar-50"></div></div>
+                <span class="med-v" id="mv-50">0.0</span>
+            </div>
+            <div class="med-fila">
+                <span class="med-f">200 Hz</span>
+                <div class="med-bar-wrap"><div class="med-cmark"></div><div class="med-bar" id="bar-200"></div></div>
+                <span class="med-v" id="mv-200">0.0</span>
+            </div>
+            <div class="med-fila">
+                <span class="med-f">1 kHz</span>
+                <div class="med-bar-wrap"><div class="med-cmark"></div><div class="med-bar" id="bar-1k"></div></div>
+                <span class="med-v" id="mv-1k">0.0</span>
+            </div>
+            <div class="med-fila">
+                <span class="med-f">5 kHz</span>
+                <div class="med-bar-wrap"><div class="med-cmark"></div><div class="med-bar" id="bar-5k"></div></div>
+                <span class="med-v" id="mv-5k">0.0</span>
+            </div>
+            <div class="med-fila">
+                <span class="med-f">10 kHz</span>
+                <div class="med-bar-wrap"><div class="med-cmark"></div><div class="med-bar" id="bar-10k"></div></div>
+                <span class="med-v" id="mv-10k">0.0</span>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<div class="col-bloque r2">
+    <div class="col-head" id="head-circ">
+        <span class="mono-sm" style="color:var(--text-secondary)">Circuito Esquemático</span>
+        <span class="col-arrow">▼</span>
+    </div>
+    <div class="col-body" id="body-circ">
+        <div class="circ-wrap">
+            <svg viewBox="0 0 640 255" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:400px;display:block">
+                <rect width="640" height="255" fill="#FDF8F3"/>
+                <line x1="28" y1="65" x2="28" y2="185" stroke="#B85C50" stroke-width="1.8"/>
+                <circle cx="28" cy="125" r="4.5" fill="#B85C50"/>
+                <text x="5" y="129" font-family="JetBrains Mono" font-size="10" fill="#B85C50" font-weight="500">IN</text>
+                <circle cx="28" cy="65" r="3" fill="#B85C50"/>
+                <circle cx="28" cy="185" r="3" fill="#B85C50"/>
+                <line x1="28" y1="65" x2="50" y2="65" stroke="#B85C50" stroke-width="1.8"/>
+                <rect x="50" y="57" width="44" height="16" fill="none" stroke="#A67B5B" stroke-width="1.5" rx="2"/>
+                <text x="72" y="52" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5C544D">8k</text>
+                <line x1="94" y1="65" x2="115" y2="65" stroke="#A67B5B" stroke-width="1.8"/>
+                <circle cx="115" cy="65" r="3.5" fill="#A67B5B"/>
+                <line x1="115" y1="65" x2="145" y2="65" stroke="#A67B5B" stroke-width="1.8"/>
+                <rect x="145" y="57" width="103" height="16" fill="none" stroke="#A67B5B" stroke-width="1.5" rx="2"/>
+                <text x="196" y="52" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5C544D">50k</text>
+                <rect x="248" y="57" width="104" height="16" fill="none" stroke="#A67B5B" stroke-width="1.5" rx="2"/>
+                <text x="300" y="52" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5C544D">50k</text>
+                <circle cx="248" cy="65" r="2.5" fill="#A67B5B"/>
+                <text x="248" y="43" text-anchor="middle" font-family="DM Sans" font-size="8" fill="#8A817A" font-style="italic">AGUDOS</text>
+                <line x1="352" y1="65" x2="374" y2="65" stroke="#A67B5B" stroke-width="1.8"/>
+                <circle cx="374" cy="65" r="3.5" fill="#A67B5B"/>
+                <line x1="374" y1="65" x2="398" y2="65" stroke="#7A9A6D" stroke-width="1.8"/>
+                <rect x="398" y="57" width="44" height="16" fill="none" stroke="#7A9A6D" stroke-width="1.5" rx="2"/>
+                <text x="420" y="52" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5C544D">8k</text>
+                <line x1="442" y1="65" x2="468" y2="65" stroke="#7A9A6D" stroke-width="1.8"/>
+                <circle cx="468" cy="65" r="3.5" fill="#7A9A6D"/>
+                <line x1="468" y1="65" x2="620" y2="65" stroke="#7A9A6D" stroke-width="1.8"/>
+                <line x1="620" y1="65" x2="620" y2="125" stroke="#7A9A6D" stroke-width="1.8"/>
+                <circle cx="620" cy="125" r="4.5" fill="#7A9A6D"/>
+                <text x="627" y="129" font-family="JetBrains Mono" font-size="10" fill="#7A9A6D" font-weight="500">OUT</text>
+                <line x1="620" y1="125" x2="620" y2="185" stroke="#7A9A6D" stroke-width="1.8"/>
+                <line x1="558" y1="185" x2="620" y2="185" stroke="#7A9A6D" stroke-width="1.8"/>
+                <line x1="468" y1="65" x2="468" y2="175" stroke="#7A9A6D" stroke-width="1.5"/>
+                <line x1="468" y1="175" x2="490" y2="175" stroke="#7A9A6D" stroke-width="1.5"/>
+                <line x1="115" y1="65" x2="115" y2="104" stroke="#A67B5B" stroke-width="1.5"/>
+                <line x1="103" y1="104" x2="127" y2="104" stroke="#A67B5B" stroke-width="2.5"/>
+                <line x1="103" y1="112" x2="127" y2="112" stroke="#A67B5B" stroke-width="2.5"/>
+                <line x1="115" y1="112" x2="115" y2="125" stroke="#A67B5B" stroke-width="1.5"/>
+                <text x="88" y="111" text-anchor="end" font-family="JetBrains Mono" font-size="8" fill="#8A817A">47nF</text>
+                <line x1="374" y1="65" x2="374" y2="104" stroke="#A67B5B" stroke-width="1.5"/>
+                <line x1="362" y1="104" x2="386" y2="104" stroke="#A67B5B" stroke-width="2.5"/>
+                <line x1="362" y1="112" x2="386" y2="112" stroke="#A67B5B" stroke-width="2.5"/>
+                <line x1="374" y1="112" x2="374" y2="125" stroke="#A67B5B" stroke-width="1.5"/>
+                <text x="390" y="111" font-family="JetBrains Mono" font-size="8" fill="#8A817A">47nF</text>
+                <line x1="115" y1="125" x2="374" y2="125" stroke="#A67B5B" stroke-width="1.5"/>
+                <line x1="248" y1="73" x2="248" y2="125" stroke="#A67B5B" stroke-width="1.2" stroke-dasharray="4,3"/>
+                <circle cx="248" cy="125" r="2.5" fill="#A67B5B"/>
+                <line x1="248" y1="125" x2="248" y2="142" stroke="#A67B5B" stroke-width="1.5"/>
+                <rect x="240" y="142" width="16" height="26" fill="none" stroke="#A67B5B" stroke-width="1.5" rx="2"/>
+                <text x="260" y="158" font-family="JetBrains Mono" font-size="8" fill="#8A817A">100Ω</text>
+                <line x1="248" y1="168" x2="248" y2="177" stroke="#A67B5B" stroke-width="1.5"/>
+                <circle cx="248" cy="177" r="2.5" fill="#A67B5B"/>
+                <line x1="28" y1="185" x2="50" y2="185" stroke="#B85C50" stroke-width="1.8"/>
+                <line x1="50" y1="173" x2="50" y2="197" stroke="#A67B5B" stroke-width="2.5"/>
+                <line x1="58" y1="173" x2="58" y2="197" stroke="#A67B5B" stroke-width="2.5"/>
+                <text x="54" y="212" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#8A817A">10nF</text>
+                <line x1="58" y1="185" x2="78" y2="185" stroke="#A67B5B" stroke-width="1.8"/>
+                <rect x="78" y="177" width="44" height="16" fill="none" stroke="#A67B5B" stroke-width="1.5" rx="2"/>
+                <text x="100" y="172" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5C544D">2k</text>
+                <line x1="122" y1="185" x2="145" y2="185" stroke="#A67B5B" stroke-width="1.8"/>
+                <rect x="145" y="177" width="103" height="16" fill="none" stroke="#A67B5B" stroke-width="1.5" rx="2"/>
+                <text x="196" y="172" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5C544D">23.5k</text>
+                <rect x="248" y="177" width="104" height="16" fill="none" stroke="#A67B5B" stroke-width="1.5" rx="2"/>
+                <text x="300" y="172" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5C544D">23.5k</text>
+                <text x="248" y="208" text-anchor="middle" font-family="DM Sans" font-size="8" fill="#8A817A" font-style="italic">GRAVES</text>
+                <line x1="352" y1="185" x2="368" y2="185" stroke="#A67B5B" stroke-width="1.8"/>
+                <rect x="368" y="177" width="44" height="16" fill="none" stroke="#A67B5B" stroke-width="1.5" rx="2"/>
+                <text x="390" y="172" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5C544D">2k</text>
+                <line x1="412" y1="185" x2="428" y2="185" stroke="#A67B5B" stroke-width="1.8"/>
+                <line x1="428" y1="173" x2="428" y2="197" stroke="#A67B5B" stroke-width="2.5"/>
+                <line x1="436" y1="173" x2="436" y2="197" stroke="#A67B5B" stroke-width="2.5"/>
+                <text x="432" y="212" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#8A817A">10nF</text>
+                <line x1="436" y1="185" x2="490" y2="185" stroke="#A67B5B" stroke-width="1.8"/>
+                <polygon points="490,163 490,207 558,185" fill="#F5EDE4" stroke="#A67B5B" stroke-width="1.5"/>
+                <text x="498" y="180" font-family="JetBrains Mono" font-size="11" fill="#5C544D" font-weight="500">−</text>
+                <text x="498" y="200" font-family="JetBrains Mono" font-size="11" fill="#5C544D" font-weight="500">+</text>
+                <text x="524" y="193" font-family="DM Sans" font-size="8" fill="#8A817A" text-anchor="middle">op-amp</text>
+                <line x1="490" y1="207" x2="490" y2="224" stroke="#5C544D" stroke-width="1.5"/>
+                <line x1="475" y1="224" x2="505" y2="224" stroke="#5C544D" stroke-width="1.5"/>
+                <line x1="480" y1="230" x2="500" y2="230" stroke="#5C544D" stroke-width="1.5"/>
+                <line x1="485" y1="236" x2="495" y2="236" stroke="#5C544D" stroke-width="1.5"/>
+                <text x="490" y="250" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#8A817A">GND</text>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<div class="col-bloque r3">
+    <div class="col-head" id="head-teo">
+        <span class="mono-sm" style="color:var(--text-secondary)">¿Cómo funciona el Baxandall?</span>
+        <span class="col-arrow">▼</span>
+    </div>
+    <div class="col-body" id="body-teo">
+        <div class="teoria-inner">
+            <div class="t-bloque">
+                <h4>El Op-Amp amplifica</h4>
+                <p>Es el único elemento activo. Opera siempre con realimentación negativa (negative-feedback), lo que mantiene la distorsión mínima en cualquier posición de los controles.</p>
+            </div>
+            <div class="t-bloque">
+                <h4>Red RC pasiva</h4>
+                <p>Resistores, capacitores y potenciómetros producen atenuación en diferentes partes del espectro de la señal. El op-amp compensa: donde la red (RC) Atenua mas, el Op-Amp Amplifica más.</p>
+            </div>
+            <div class="t-bloque">
+                <h4>Simetría Amplificación/Atenuación</h4>
+                <p>Con el potenciometro al centro se obtiene gananca unitaria (0 dB). Girarlo produce curvas especulares exactamente simétricas: +X dB hacia un lado, −X dB hacia el otro.</p>
+            </div>
+        </div>
+        <div class="teoria-nota">
+            Peter J. Baxandall — «Negative-feedback tone control», Wireless World, octubre 1952.
+        </div>
+    </div>
+</div>
+
+</main>
+
+<footer>Verio · Aplicaciones Didácticas</footer>
+
+<script>
+var bass_db = 0, treble_db = 0;
+var fb = 150, ft = 6000;
+var ab_bass = null, ab_treble = null;
+var cur_tab = 'amp';
+var hoverPt = null;
+var N = 280;
+var freqs = [];
+
+var aCtx = null, bsrc = null, bfBass = null, bfTreb = null, osc = null;
+var playing = false;
+
+var chart_amp, chart_ph, chart_ot;
+
+var OCT_F = [31.5, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
+var OCT_L = ['31','63','125','250','500','1k','2k','4k','8k','16k'];
+var MED_F = [50, 200, 1000, 5000, 10000];
+var MED_ID = ['50','200','1k','5k','10k'];
+
+var dotPlugin = {
+    id: 'dotP',
+    afterDraw: function(c) {
+        if (!hoverPt || cur_tab !== 'amp') return;
+        var cx = c.ctx;
+        cx.save();
+        cx.beginPath();
+        cx.arc(hoverPt.px, hoverPt.py, 5.5, 0, 6.2832);
+        cx.fillStyle = '#B85C50';
+        cx.fill();
+        cx.strokeStyle = '#FDF8F3';
+        cx.lineWidth = 2;
+        cx.stroke();
+        cx.restore();
+    }
+};
+
+Chart.register(dotPlugin);
+
+function buildFreqs() {
+    var lmin = Math.log10(20), lmax = Math.log10(20000);
+    for (var i = 0; i < N; i++) {
+        freqs.push(Math.pow(10, lmin + (i / (N - 1)) * (lmax - lmin)));
+    }
+}
+
+function calcDB(f, b, t) {
+    var Ab = Math.pow(10, b / 20);
+    var At = Math.pow(10, t / 20);
+    var f2 = f * f;
+    var bm2 = (f2 + Ab * Ab * fb * fb) / (f2 + fb * fb);
+    var tm2 = (At * At * f2 + ft * ft) / (f2 + ft * ft);
+    return 10 * Math.log10(bm2 * tm2);
+}
+
+function calcPhase(f, b, t) {
+    var Ab = Math.pow(10, b / 20);
+    var At = Math.pow(10, t / 20);
+    var w = 2 * Math.PI * f;
+    var wb = 2 * Math.PI * fb;
+    var wt = 2 * Math.PI * ft;
+    var pb = Math.atan2(w, Ab * wb) - Math.atan2(w, wb);
+    var pt = Math.atan2(At * w, wt) - Math.atan2(w, wt);
+    return (pb + pt) * 180 / Math.PI;
+}
+
+function buildCurva(b, t) {
+    var pts = [];
+    for (var i = 0; i < freqs.length; i++) {
+        pts.push({x: freqs[i], y: calcDB(freqs[i], b, t)});
+    }
+    return pts;
+}
+
+function buildPhase(b, t) {
+    var pts = [];
+    for (var i = 0; i < freqs.length; i++) {
+        pts.push({x: freqs[i], y: calcPhase(freqs[i], b, t)});
+    }
+    return pts;
+}
+
+function buildZero() {
+    var pts = [];
+    for (var i = 0; i < freqs.length; i++) pts.push({x: freqs[i], y: 0});
+    return pts;
+}
+
+function buildVline(fv) {
+    return [{x: fv, y: -16}, {x: fv, y: 16}];
+}
+
+function buildPhaseZero() {
+    var pts = [];
+    for (var i = 0; i < freqs.length; i++) pts.push({x: freqs[i], y: 0});
+    return pts;
+}
+
+function octColors(b, t) {
+    var cols = [];
+    for (var i = 0; i < OCT_F.length; i++) {
+        var v = calcDB(OCT_F[i], b, t);
+        if (v > 0.1) cols.push('rgba(122,154,109,0.75)');
+        else if (v < -0.1) cols.push('rgba(184,92,80,0.75)');
+        else cols.push('rgba(166,123,91,0.45)');
+    }
+    return cols;
+}
+
+function octVals(b, t) {
+    var vals = [];
+    for (var i = 0; i < OCT_F.length; i++) {
+        vals.push(calcDB(OCT_F[i], b, t));
+    }
+    return vals;
+}
+
+function sharedXAxis() {
+    return {
+        type: 'logarithmic',
+        min: 20,
+        max: 20000,
+        grid: {color: 'rgba(44,36,32,0.05)', drawTicks: false},
+        border: {color: 'rgba(44,36,32,0.12)'},
+        ticks: {
+            font: {family: 'JetBrains Mono', size: 9.5},
+            color: '#8A817A',
+            padding: 6,
+            callback: function(val) {
+                var m = {20:'20',50:'50',100:'100',200:'200',500:'500',1000:'1k',2000:'2k',5000:'5k',10000:'10k',20000:'20k'};
+                return m[val] !== undefined ? m[val] : '';
+            }
+        },
+        afterBuildTicks: function(ax) {
+            ax.ticks = [
+                {value:20},{value:50},{value:100},{value:200},{value:500},
+                {value:1000},{value:2000},{value:5000},{value:10000},{value:20000}
+            ];
+        },
+        title: {display:true, text:'Hz', font:{family:'JetBrains Mono',size:9}, color:'#8A817A', padding:{top:4}}
+    };
+}
+
+function initChartAmp() {
+    var ctx = document.getElementById('cvAmp').getContext('2d');
+    chart_amp = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                {
+                    data: buildCurva(0, 0),
+                    borderColor: '#B85C50',
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    tension: 0.3,
+                    fill: {target: 1, above: 'rgba(155,176,143,0.10)', below: 'rgba(184,92,80,0.10)'},
+                    order: 1
+                },
+                {
+                    data: buildZero(),
+                    borderColor: 'rgba(122,154,109,0.4)',
+                    borderWidth: 1.5,
+                    borderDash: [5,4],
+                    pointRadius: 0,
+                    tension: 0,
+                    order: 2
+                },
+                {
+                    data: buildVline(fb),
+                    borderColor: 'rgba(166,123,91,0.2)',
+                    borderWidth: 1,
+                    borderDash: [3,4],
+                    pointRadius: 0,
+                    order: 3
+                },
+                {
+                    data: buildVline(ft),
+                    borderColor: 'rgba(166,123,91,0.2)',
+                    borderWidth: 1,
+                    borderDash: [3,4],
+                    pointRadius: 0,
+                    order: 3
+                },
+                {
+                    data: [],
+                    borderColor: 'rgba(90,58,34,0.42)',
+                    borderWidth: 1.5,
+                    borderDash: [7,4],
+                    pointRadius: 0,
+                    tension: 0.3,
+                    fill: false,
+                    order: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {duration: 180, easing: 'easeOutCubic'},
+            interaction: {mode:'index', intersect:false},
+            scales: {
+                x: sharedXAxis(),
+                y: {
+                    min: -14, max: 14,
+                    grid: {
+                        color: function(c) { return c.tick.value === 0 ? 'rgba(44,36,32,0.2)' : 'rgba(44,36,32,0.05)'; },
+                        drawTicks: false
+                    },
+                    border: {color: 'rgba(44,36,32,0.12)'},
+                    ticks: {
+                        stepSize: 3,
+                        font: {family:'JetBrains Mono',size:9.5},
+                        color: '#8A817A',
+                        padding: 7,
+                        callback: function(v) { if (v === 0) return '0 dB'; return (v > 0 ? '+' : '') + v; }
+                    },
+                    title: {display:true, text:'dB', font:{family:'JetBrains Mono',size:9}, color:'#8A817A'}
+                }
+            },
+            plugins: {
+                legend: {display:false},
+                tooltip: {
+                    filter: function(it) { return it.datasetIndex === 0; },
+                    backgroundColor: '#2C2420',
+                    padding: 9,
+                    titleFont: {family:'JetBrains Mono',size:10},
+                    bodyFont: {family:'JetBrains Mono',size:11},
+                    titleColor: '#8A817A',
+                    bodyColor: '#FDF8F3',
+                    callbacks: {
+                        title: function(items) {
+                            var f = items[0].parsed.x;
+                            return f >= 1000 ? (f/1000).toFixed(f>=10000?0:1)+' kHz' : Math.round(f)+' Hz';
+                        },
+                        label: function(it) {
+                            var v = it.parsed.y;
+                            return (v >= 0 ? '+' : '') + v.toFixed(1) + ' dB';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    var canvas = document.getElementById('cvAmp');
+    canvas.addEventListener('mousemove', function(e) {
+        var rect = canvas.getBoundingClientRect();
+        var mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+        var my = (e.clientY - rect.top) * (canvas.height / rect.height);
+        var area = chart_amp.chartArea;
+        if (mx < area.left || mx > area.right || my < area.top || my > area.bottom) {
+            hoverPt = null;
+            document.getElementById('hover-disp').textContent = '—';
+            chart_amp.draw();
+            return;
+        }
+        var lmin = Math.log10(20), lmax = Math.log10(20000);
+        var f = Math.pow(10, lmin + (mx - area.left) / (area.right - area.left) * (lmax - lmin));
+        var db = calcDB(f, bass_db, treble_db);
+        var ysc = chart_amp.scales.y;
+        var py = area.top + (area.bottom - area.top) * (1 - (db - ysc.min) / (ysc.max - ysc.min));
+        hoverPt = {px: mx, py: py};
+        var fLabel = f >= 1000 ? (f/1000).toFixed(1)+' kHz' : Math.round(f)+' Hz';
+        document.getElementById('hover-disp').textContent = fLabel + ' · ' + (db >= 0 ? '+' : '') + db.toFixed(1) + ' dB';
+        chart_amp.draw();
+    });
+
+    canvas.addEventListener('mouseleave', function() {
+        hoverPt = null;
+        document.getElementById('hover-disp').textContent = '—';
+        chart_amp.draw();
+    });
+}
+
+function initChartPhase() {
+    var ctx = document.getElementById('cvPhase').getContext('2d');
+    chart_ph = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                {
+                    data: buildPhase(0, 0),
+                    borderColor: '#A67B5B',
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    tension: 0.3,
+                    fill: {target: 1, above: 'rgba(166,123,91,0.07)', below: 'rgba(166,123,91,0.07)'},
+                    order: 1
+                },
+                {
+                    data: buildPhaseZero(),
+                    borderColor: 'rgba(122,154,109,0.4)',
+                    borderWidth: 1.5,
+                    borderDash: [5,4],
+                    pointRadius: 0,
+                    tension: 0,
+                    order: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {duration: 180, easing: 'easeOutCubic'},
+            scales: {
+                x: sharedXAxis(),
+                y: {
+                    min: -75, max: 75,
+                    grid: {
+                        color: function(c) { return c.tick.value === 0 ? 'rgba(44,36,32,0.2)' : 'rgba(44,36,32,0.05)'; },
+                        drawTicks: false
+                    },
+                    border: {color: 'rgba(44,36,32,0.12)'},
+                    ticks: {
+                        stepSize: 15,
+                        font: {family:'JetBrains Mono',size:9.5},
+                        color: '#8A817A',
+                        padding: 7,
+                        callback: function(v) { return (v > 0 ? '+' : '') + v + '°'; }
+                    },
+                    title: {display:true, text:'grados', font:{family:'JetBrains Mono',size:9}, color:'#8A817A'}
+                }
+            },
+            plugins: {
+                legend: {display:false},
+                tooltip: {
+                    filter: function(it) { return it.datasetIndex === 0; },
+                    backgroundColor: '#2C2420',
+                    padding: 9,
+                    titleFont: {family:'JetBrains Mono',size:10},
+                    bodyFont: {family:'JetBrains Mono',size:11},
+                    titleColor: '#8A817A',
+                    bodyColor: '#FDF8F3',
+                    callbacks: {
+                        title: function(items) {
+                            var f = items[0].parsed.x;
+                            return f >= 1000 ? (f/1000).toFixed(1)+' kHz' : Math.round(f)+' Hz';
+                        },
+                        label: function(it) {
+                            var v = it.parsed.y;
+                            return (v >= 0 ? '+' : '') + v.toFixed(1) + '°';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function initChartOct() {
+    var ctx = document.getElementById('cvOct').getContext('2d');
+    chart_ot = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: OCT_L,
+            datasets: [{
+                data: octVals(0, 0),
+                backgroundColor: octColors(0, 0),
+                borderColor: 'transparent',
+                borderRadius: 4,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {duration: 220, easing: 'easeOutCubic'},
+            scales: {
+                x: {
+                    grid: {color: 'rgba(44,36,32,0.05)', drawTicks: false},
+                    border: {color: 'rgba(44,36,32,0.12)'},
+                    ticks: {font:{family:'JetBrains Mono',size:9.5}, color:'#8A817A', padding:6},
+                    title: {display:true, text:'Banda (Hz)', font:{family:'JetBrains Mono',size:9}, color:'#8A817A'}
+                },
+                y: {
+                    min: -14, max: 14,
+                    grid: {
+                        color: function(c) { return c.tick.value === 0 ? 'rgba(44,36,32,0.2)' : 'rgba(44,36,32,0.05)'; },
+                        drawTicks: false
+                    },
+                    border: {color: 'rgba(44,36,32,0.12)'},
+                    ticks: {
+                        stepSize: 3,
+                        font: {family:'JetBrains Mono',size:9.5},
+                        color: '#8A817A',
+                        padding: 7,
+                        callback: function(v) { if (v === 0) return '0 dB'; return (v>0?'+':'')+v; }
+                    },
+                    title: {display:true, text:'dB', font:{family:'JetBrains Mono',size:9}, color:'#8A817A'}
+                }
+            },
+            plugins: {
+                legend: {display:false},
+                tooltip: {
+                    backgroundColor: '#2C2420',
+                    padding: 9,
+                    titleFont: {family:'JetBrains Mono',size:10},
+                    bodyFont: {family:'JetBrains Mono',size:11},
+                    titleColor: '#8A817A',
+                    bodyColor: '#FDF8F3',
+                    callbacks: {
+                        label: function(it) {
+                            var v = it.parsed.y;
+                            return (v>=0?'+':'')+v.toFixed(1)+' dB';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateSlBg(sl, val, isFC) {
+    var min = parseFloat(sl.min), max = parseFloat(sl.max);
+    var pct = (val - min) / (max - min) * 100;
+    var c = (0 - min) / (max - min) * 100;
+    var col = isFC ? 'var(--wood-light)' : 'var(--sage)';
+    var colN = isFC ? 'var(--wood-light)' : 'var(--terracotta-light)';
+    var grad;
+    if (!isFC) {
+        if (pct >= c) {
+            grad = 'linear-gradient(to right,var(--cream-dark) '+c+'%,'+col+' '+c+'%,'+col+' '+pct+'%,var(--cream-dark) '+pct+'%)';
+        } else {
+            grad = 'linear-gradient(to right,var(--cream-dark) '+pct+'%,'+colN+' '+pct+'%,'+colN+' '+c+'%,var(--cream-dark) '+c+'%)';
+        }
+    } else {
+        grad = 'linear-gradient(to right,var(--wood-light) 0%,var(--wood-light) '+pct+'%,var(--cream-dark) '+pct+'%)';
+    }
+    sl.style.background = grad;
+}
+
+function fmtDB(v) {
+    return (v >= 0 ? '+' : '') + v.toFixed(1) + ' dB';
+}
+
+function fmtFC(v) {
+    return v >= 1000 ? (v/1000).toFixed(v>=10000?0:1)+' kHz' : v+' Hz';
+}
+
+function updateMed(id, v) {
+    var bar = document.getElementById('bar-'+id);
+    var mv = document.getElementById('mv-'+id);
+    var pct = Math.min(Math.abs(v)/12,1)*50;
+    if (v >= 0) {
+        bar.style.left = '50%';
+        bar.style.width = pct+'%';
+        bar.style.background = '#7A9A6D';
+    } else {
+        bar.style.left = (50-pct)+'%';
+        bar.style.width = pct+'%';
+        bar.style.background = '#B85C50';
+    }
+    mv.textContent = (v>=0?'+':'')+v.toFixed(1);
+    mv.className = 'med-v'+(v>0.08?' pos':(v<-0.08?' neg':''));
+}
+
+function updateFilters() {
+    if (!bfBass || !bfTreb) return;
+    bfBass.frequency.value = fb;
+    bfBass.gain.value = bass_db;
+    bfTreb.frequency.value = ft;
+    bfTreb.gain.value = treble_db;
+}
+
+function updateUI() {
+    var vb = document.getElementById('val-bass');
+    var vt = document.getElementById('val-treble');
+
+    vb.textContent = fmtDB(bass_db);
+    vb.className = 'sl-val'+(bass_db>0.08?' pos':(bass_db<-0.08?' neg':''));
+
+    vt.textContent = fmtDB(treble_db);
+    vt.className = 'sl-val'+(treble_db>0.08?' pos':(treble_db<-0.08?' neg':''));
+
+    document.getElementById('val-fc-bass').textContent = fmtFC(fb);
+    document.getElementById('val-fc-treble').textContent = fmtFC(ft);
+
+    updateSlBg(document.getElementById('sl-bass'), bass_db, false);
+    updateSlBg(document.getElementById('sl-treble'), treble_db, false);
+    updateSlBg(document.getElementById('sl-fc-bass'), fb, true);
+    updateSlBg(document.getElementById('sl-fc-treble'), ft, true);
+
+    for (var i = 0; i < MED_F.length; i++) {
+        updateMed(MED_ID[i], calcDB(MED_F[i], bass_db, treble_db));
+    }
+
+    chart_amp.data.datasets[0].data = buildCurva(bass_db, treble_db);
+    chart_amp.data.datasets[2].data = buildVline(fb);
+    chart_amp.data.datasets[3].data = buildVline(ft);
+    chart_amp.update();
+
+    chart_ph.data.datasets[0].data = buildPhase(bass_db, treble_db);
+    chart_ph.update();
+
+    var ov = octVals(bass_db, treble_db);
+    chart_ot.data.datasets[0].data = ov;
+    chart_ot.data.datasets[0].backgroundColor = octColors(bass_db, treble_db);
+    chart_ot.update();
+
+    updateFilters();
+}
+
+function makeEditable(spanId, getter, setter, mn, mx, isFC) {
+    var el = document.getElementById(spanId);
+    el.addEventListener('click', function() {
+        var cur = getter();
+        var inp = document.createElement('input');
+        inp.type = 'number';
+        inp.value = cur.toFixed(isFC ? 0 : 1);
+        inp.min = mn; inp.max = mx;
+        inp.step = isFC ? 10 : 0.5;
+        inp.style.cssText = 'font-family:JetBrains Mono,monospace;font-size:13px;font-weight:500;width:72px;border:1px solid var(--sage);border-radius:4px;padding:2px 5px;text-align:right;background:var(--cream-light);color:var(--text-primary);outline:none;';
+        el.parentNode.replaceChild(inp, el);
+        inp.focus();
+        inp.select();
+
+        function commit() {
+            var v = parseFloat(inp.value);
+            if (isNaN(v)) v = isFC ? (mn+mx)/2 : 0;
+            v = Math.max(mn, Math.min(mx, v));
+            setter(v);
+            inp.parentNode.replaceChild(el, inp);
+            updateUI();
+        }
+
+        inp.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') commit();
+            if (e.key === 'Escape') inp.parentNode.replaceChild(el, inp);
+        });
+        inp.addEventListener('blur', commit);
+    });
+}
+
+function initSliders() {
+    var slb = document.getElementById('sl-bass');
+    var slt = document.getElementById('sl-treble');
+    var slfc_b = document.getElementById('sl-fc-bass');
+    var slfc_t = document.getElementById('sl-fc-treble');
+
+    slb.addEventListener('input', function() { bass_db = parseFloat(this.value); updateUI(); });
+    slt.addEventListener('input', function() { treble_db = parseFloat(this.value); updateUI(); });
+    slfc_b.addEventListener('input', function() { fb = parseFloat(this.value); updateUI(); });
+    slfc_t.addEventListener('input', function() { ft = parseFloat(this.value); updateUI(); });
+
+    slb.addEventListener('dblclick', function() { bass_db = 0; this.value = 0; updateUI(); });
+    slt.addEventListener('dblclick', function() { treble_db = 0; this.value = 0; updateUI(); });
+    slfc_b.addEventListener('dblclick', function() { fb = 150; this.value = 150; updateUI(); });
+    slfc_t.addEventListener('dblclick', function() { ft = 6000; this.value = 6000; updateUI(); });
+
+    makeEditable('val-bass', function(){return bass_db;}, function(v){bass_db=v;document.getElementById('sl-bass').value=v;}, -12, 12, false);
+    makeEditable('val-treble', function(){return treble_db;}, function(v){treble_db=v;document.getElementById('sl-treble').value=v;}, -12, 12, false);
+    makeEditable('val-fc-bass', function(){return fb;}, function(v){fb=v;document.getElementById('sl-fc-bass').value=v;}, 50, 400, true);
+    makeEditable('val-fc-treble', function(){return ft;}, function(v){ft=v;document.getElementById('sl-fc-treble').value=v;}, 2000, 16000, true);
+}
+
+function stopAudio() {
+    if (bsrc) { try { bsrc.stop(); } catch(e){} bsrc.disconnect(); bsrc = null; }
+    if (osc)  { try { osc.stop(); }  catch(e){} osc.disconnect();  osc = null; }
+    playing = false;
+    var pb = document.getElementById('play-btn');
+    pb.textContent = '▶ Escuchar';
+    pb.classList.remove('playing');
+}
+
+function startAudio() {
+    if (!aCtx) aCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (aCtx.state === 'suspended') aCtx.resume();
+
+    bfBass = aCtx.createBiquadFilter();
+    bfBass.type = 'lowshelf';
+    bfBass.frequency.value = fb;
+    bfBass.gain.value = bass_db;
+
+    bfTreb = aCtx.createBiquadFilter();
+    bfTreb.type = 'highshelf';
+    bfTreb.frequency.value = ft;
+    bfTreb.gain.value = treble_db;
+
+    var gain = aCtx.createGain();
+    gain.gain.value = 0.28;
+
+    var sel = document.getElementById('audio-sel').value;
+    if (sel === 'noise') {
+        var sr = aCtx.sampleRate;
+        var buf = aCtx.createBuffer(1, sr * 3, sr);
+        var d = buf.getChannelData(0);
+        for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+        bsrc = aCtx.createBufferSource();
+        bsrc.buffer = buf;
+        bsrc.loop = true;
+        bsrc.connect(bfBass);
+    } else {
+        osc = aCtx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = sel === '440' ? 440 : 1000;
+        osc.connect(bfBass);
+        osc.start();
+    }
+
+    bfBass.connect(bfTreb);
+    bfTreb.connect(gain);
+    gain.connect(aCtx.destination);
+    if (bsrc) bsrc.start();
+    playing = true;
+
+    var pb = document.getElementById('play-btn');
+    pb.textContent = '⏹ Detener';
+    pb.classList.add('playing');
+}
+
+function initAudio() {
+    document.getElementById('play-btn').addEventListener('click', function() {
+        if (playing) stopAudio();
+        else startAudio();
+    });
+    document.getElementById('audio-sel').addEventListener('change', function() {
+        if (playing) { stopAudio(); startAudio(); }
+    });
+}
+
+function initTabs() {
+    var btns = document.querySelectorAll('.tab-btn');
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener('click', function() {
+            var t = this.getAttribute('data-tab');
+            cur_tab = t;
+            var allBtns = document.querySelectorAll('.tab-btn');
+            for (var k = 0; k < allBtns.length; k++) allBtns[k].classList.remove('active');
+            this.classList.add('active');
+
+            var tabs = document.querySelectorAll('.canvas-tab');
+            for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove('active');
+            document.getElementById('tab-'+t).classList.add('active');
+
+            var ley = document.getElementById('leyenda-wrap');
+            ley.style.display = (t === 'oct') ? 'none' : '';
+        });
+    }
+}
+
+function initAB() {
+    document.getElementById('btn-ab').addEventListener('click', function() {
+        if (ab_bass === null) {
+            ab_bass = bass_db; ab_treble = treble_db;
+            chart_amp.data.datasets[4].data = buildCurva(ab_bass, ab_treble);
+            chart_amp.update();
+            this.classList.add('on');
+            this.textContent = 'Limpiar A/B';
+            document.getElementById('ley-ab').style.display = '';
+        } else {
+            ab_bass = null; ab_treble = null;
+            chart_amp.data.datasets[4].data = [];
+            chart_amp.update();
+            this.classList.remove('on');
+            this.textContent = 'A/B';
+            document.getElementById('ley-ab').style.display = 'none';
+        }
+    });
+}
+
+function exportPNG() {
+    var link = document.createElement('a');
+    link.download = 'baxandall-curva.png';
+    link.href = chart_amp.toBase64Image('image/png', 1);
+    link.click();
+}
+
+function exportCSV() {
+    var rows = ['Frecuencia_Hz,Amplitud_dB,Fase_grados'];
+    for (var i = 0; i < freqs.length; i++) {
+        var f = freqs[i];
+        rows.push(f.toFixed(2)+','+calcDB(f,bass_db,treble_db).toFixed(4)+','+calcPhase(f,bass_db,treble_db).toFixed(4));
+    }
+    var blob = new Blob([rows.join('\n')], {type:'text/csv'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.download = 'baxandall-respuesta.csv';
+    a.href = url;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function initCol(hId, bId) {
+    var h = document.getElementById(hId), b = document.getElementById(bId);
+    h.addEventListener('click', function() { h.classList.toggle('open'); b.classList.toggle('vis'); });
+}
+
+buildFreqs();
+
+window.addEventListener('load', function() {
+    initChartAmp();
+    initChartPhase();
+    initChartOct();
+    initSliders();
+    initAudio();
+    initTabs();
+    initAB();
+    initCol('head-circ', 'body-circ');
+    initCol('head-teo', 'body-teo');
+    document.getElementById('btn-png').addEventListener('click', exportPNG);
+    document.getElementById('btn-csv').addEventListener('click', exportCSV);
+    updateUI();
+});
+</script>
+</body>
+</html>
